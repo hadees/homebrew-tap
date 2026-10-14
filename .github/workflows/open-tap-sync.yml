@@ -8,17 +8,28 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}
+
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Checks the tap out into the workspace (no actions/checkout) and keeps
+      # the token as git auth: the script pushes the sync branches with it.
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@e99025eb970cfa124b8284a35463d87426917478 # 2026.09.28.1
+        with:
+          token: ${{ github.token }}
 
       - run: .github/open-tap-sync.sh self-test
 
       - run: .github/open-tap-sync.sh
         env:
           GH_TOKEN: ${{ github.token }}
+          TAP_NAME: ${{ steps.set-up-homebrew.outputs.tap-name }}
