@@ -1,0 +1,24 @@
+name: open-tap sync
+
+on:
+  schedule:
+    # Mondays at 5:17 UTC
+    - cron: 17 5 * * 1
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - run: .github/open-tap-sync.sh self-test
+
+      - run: .github/open-tap-sync.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
