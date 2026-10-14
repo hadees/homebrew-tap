@@ -1,0 +1,16 @@
+// .markdownlint-cli2.jsonc — every markdownlint rule on (MD001–MD060; `default:
+// true` picks up new rules), minus the three that fight how ICA docs are
+// written: prose is not hard-wrapped (MD013), README banners use <picture>/
+// <details> (MD033), and CLAUDE.md-style docs often open with a paragraph
+// rather than an H1 (MD041). Record logs reuse dated H2s (MD024 siblings_only).
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD033": { "allowed_elements": ["div", "br", "details", "summary", "picture", "source", "img", "sub", "sup", "kbd"] },
+    "MD041": false
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["**/node_modules/**", "**/.venv/**", "**/target/**"]
+}

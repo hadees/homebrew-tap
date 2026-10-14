@@ -1,0 +1,10 @@
+{
+  "_comment": "editorconfig-checker >= 4.0 reads this file (.ecrc is ignored). IndentSize is off: shell continuation lines are legitimately odd-width.",
+  "Exclude": [
+    "\\.lock$"
+  ],
+  "Disable": {
+    "MaxLineLength": true,
+    "IndentSize": true
+  }
+}

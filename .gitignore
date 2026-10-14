@@ -1,0 +1,5 @@
+.DS_Store
+*.swp
+
+# Claude Code: personal settings are per-machine.
+.claude/settings.local.json

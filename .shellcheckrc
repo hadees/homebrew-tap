@@ -1,0 +1,19 @@
+# .shellcheckrc — repo-wide shellcheck policy (shellcheck ≥ 0.11).
+#
+# external-sources: follow `source`d files so a repo-relative library is
+# checked with its sourcer and a typo'd path fails here, not on the host.
+# A `source` of a file that only exists on the fleet gets a line-scoped
+# `# shellcheck source=/dev/null` with the reason — never a repo-wide SC1091
+# disable, which would also hide a real unfollowed source.
+#
+# enable= adds the optional checks that catch real bugs without fighting
+# idiomatic shell. Off on purpose, each measured against the scripts this
+# standard ships: require-variable-braces / quote-safe-variables (fight
+# idiomatic bash), require-double-brackets (POSIX sh scripts must keep [ ]),
+# check-set-e-suppressed (fires on every `if have tool` guard),
+# check-extra-masked-returns (flags every `$(cmd)` inside an echo),
+# add-default-case (every `case` that means "otherwise do nothing"). No
+# `shell=`: the shebang decides — a repo mixes #!/bin/sh and bash scripts.
+external-sources=true
+source-path=SCRIPTDIR
+enable=avoid-nullary-conditions,deprecate-which
