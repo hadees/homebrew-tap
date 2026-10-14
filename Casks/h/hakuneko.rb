@@ -17,7 +17,7 @@ cask "hakuneko" do
   app "HakuNeko Desktop.app"
 
   postflight_steps do
-    run "/usr/bin/xattr", args: ["-r", "-d", "com.apple.quarantine", "{{appdir}}/HakuNeko Desktop.app"]
+    run "/usr/bin/xattr", args: ["-r", "-d", "com.apple.quarantine", "{{staged_path}}"]
   end
 
   zap trash: [
