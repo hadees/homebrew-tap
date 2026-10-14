@@ -57,8 +57,8 @@ for path in Casks/*/*.rb; do
   git checkout -q main
   cmp -s "$path" "$theirs" && continue
   # Already proposed (open, or closed as unwanted): wait for open-tap to move.
-  if git fetch -q origin "$branch" 2>/dev/null &&
-    git show "FETCH_HEAD:$path" 2>/dev/null | cmp -s - "$theirs"; then
+  if git fetch -q origin "$branch" 2> /dev/null \
+    && git show "FETCH_HEAD:$path" 2> /dev/null | cmp -s - "$theirs"; then
     continue
   fi
 
@@ -71,7 +71,7 @@ for path in Casks/*/*.rb; do
   git commit -q -am "$cask: sync from open-tap/homebrew-casks"
   git push -q -f origin "$branch"
   title="$cask: sync from open-tap ($v)"
-  if [ "$(gh pr view "$branch" --json state -q .state 2>/dev/null || true)" = OPEN ]; then
+  if [ "$(gh pr view "$branch" --json state -q .state 2> /dev/null || true)" = OPEN ]; then
     gh pr edit "$branch" --title "$title" --body "$body"
   else
     gh pr create --head "$branch" --base main --title "$title" --body "$body"

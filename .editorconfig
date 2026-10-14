@@ -1,0 +1,21 @@
+# One indentation/EOL/charset baseline that every editor, editorconfig-checker,
+# and shfmt read. shfmt takes its options from here (a CLI flag would disable
+# that), so shell style is set once.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# two trailing spaces are a Markdown hard line break
+[*.md]
+trim_trailing_whitespace = false
+
+[*.sh]
+binary_next_line = true
+case_indent = true
+space_redirects = true

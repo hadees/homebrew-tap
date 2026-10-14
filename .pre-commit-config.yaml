@@ -1,0 +1,90 @@
+# Lint layer, adapted from the ICA scaffold-repo standard to a Homebrew tap.
+# Run with prek (`uvx prek install`, `uvx prek run --all-files`).
+# shellcheck and actionlint come from .tool-versions (asdf/mise); `brew style`
+# from the Homebrew this tap is installed into.
+default_install_hook_types: [pre-commit, commit-msg]
+default_stages: [pre-commit]
+minimum_pre_commit_version: "4.0.0"
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: detect-private-key
+      - id: no-commit-to-branch
+        args: [--branch, main]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.38.0
+    hooks:
+      - id: check-github-workflows
+      - id: check-dependabot
+
+  - repo: local
+    hooks:
+      - id: actionlint
+        name: actionlint
+        entry: actionlint
+        language: system
+        pass_filenames: false
+        files: ^\.github/workflows/.*\.ya?ml$
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck
+        language: system
+        types: [shell]
+      - id: brew-style
+        name: brew style
+        entry: brew style
+        language: system
+        files: ^Casks/.*\.rb$
+      - id: check-subject
+        name: commit subject (emoji + Conventional Commits)
+        entry: .githooks/check-subject.sh
+        language: script
+        stages: [commit-msg]
+
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.30.1
+    hooks:
+      - id: zizmor
+        args: [--min-severity=medium]
+
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.14.1-1
+    hooks:
+      - id: shfmt                     # reads .editorconfig; no flags on purpose
+        # a verbatim copy of the git-conventions checker; re-copied, not edited
+        exclude: ^\.githooks/check-subject\.sh$
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.2
+    hooks:
+      - id: markdownlint-cli2
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.50.1
+    hooks:
+      - id: typos
+        args: [--force-exclude]       # report only; upstream's default autofixes
+
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker
+    rev: v4.0.1
+    hooks:
+      - id: editorconfig-checker
