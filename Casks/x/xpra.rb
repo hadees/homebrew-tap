@@ -29,12 +29,10 @@ cask "xpra" do
   depends_on macos: :monterey
 
   app "Xpra.app"
-  # The launcher finds its bundle from the path it was run by, so a symlink
-  # (`binary`) breaks it; a wrapper execs the real path.
-  command_wrapper "xpra", executable: "#{appdir}/Xpra.app/Contents/MacOS/Xpra"
+  binary "#{appdir}/Xpra.app/Contents/MacOS/Xpra", target: "xpra"
 
   postflight_steps do
-    run "/usr/bin/xattr", args: ["-r", "-d", "com.apple.quarantine", "{{appdir}}/Xpra.app"]
+    run "/usr/bin/xattr", args: ["-r", "-d", "com.apple.quarantine", "{{staged_path}}"]
   end
 
   zap delete: "/Library/Application Support/Xpra",
