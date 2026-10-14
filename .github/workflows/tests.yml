@@ -8,6 +8,10 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 defaults:
   run:
     shell: bash -xeuo pipefail {0}
@@ -23,6 +27,7 @@ jobs:
               image: ghcr.io/homebrew/brew:main
               options: --privileged
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     container: ${{ fromJSON(toJSON(matrix.container)) }} # zizmor: ignore[unpinned-images]
     permissions:
       actions: read
