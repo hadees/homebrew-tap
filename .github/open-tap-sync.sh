@@ -7,7 +7,8 @@
 # `sha256` moved, or whether anything else did (a url, an install step, a new
 # stanza) — that second kind is what reading the diff is for.
 #
-#   open-tap-sync.sh             sync (CI: needs GH_TOKEN and a checkout)
+#   open-tap-sync.sh             sync (CI: needs GH_TOKEN, TAP_NAME and the tap
+#                                checked out by setup-homebrew)
 #   open-tap-sync.sh self-test   check the verdict logic
 set -euo pipefail
 
@@ -43,6 +44,7 @@ if [ "${1:-}" = self-test ]; then
   exit 0
 fi
 
+: "${TAP_NAME:?set by setup-homebrew (outputs.tap-name)}"
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
@@ -63,11 +65,21 @@ for path in Casks/*/*.rb; do
   fi
 
   v=$(verdict "$path" "$theirs")
-  # shellcheck disable=SC2016 # the backticks are Markdown
-  body=$(printf 'open-tap/homebrew-casks changed `%s`.\n\nVerdict: **%s**\n\n```diff\n%s\n```\n' \
-    "$path" "$v" "$(diff -u "$path" "$theirs" | tail -n +3 || true)")
+  changes=$(diff -u "$path" "$theirs" | tail -n +3 || true)
   git checkout -q -B "$branch" main
   cp "$theirs" "$path"
+  # test-bot runs on a PR opened with GITHUB_TOKEN only once someone approves
+  # the run, so check the new copy here and put the result in the PR.
+  checks=
+  if ! out=$(brew style "$path" 2>&1 && brew audit --cask "$TAP_NAME/$cask" 2>&1); then
+    v="REVIEW: brew style/audit failed; $v"
+    # GitHub caps a PR body at 65536 characters.
+    # shellcheck disable=SC2016 # the backticks are Markdown
+    checks=$(printf '\n\n```\n%s\n```' "$(head -c 20000 <<< "$out")")
+  fi
+  # shellcheck disable=SC2016 # the backticks are Markdown
+  body=$(printf 'open-tap/homebrew-casks changed `%s`.\n\nVerdict: **%s**\n\n```diff\n%s\n```%s\n' \
+    "$path" "$v" "$changes" "$checks")
   git commit -q -am "$cask: sync from open-tap/homebrew-casks"
   git push -q -f origin "$branch"
   title="$cask: sync from open-tap ($v)"
