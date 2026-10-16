@@ -12,33 +12,19 @@ else at install time.
 
 ### Deviations from the ICA repo standard (scaffold-repo)
 
-This is a personal repo and a Homebrew tap, so the audit still reports these.
-Each is deliberate:
+The audit waives what an external owner, the cask DSL and `brew test-bot`
+make moot (public repo, Dependabot, no Ruby toolchain, no JUnit). It still
+reports these two, and both are deliberate:
 
-- `github/private`: the repo is public on purpose. `brew tap hadees/tap` has
-  to work without credentials, and this is not company code.
-- `ci/renovate`, `ci/renovate-dependabot`: Dependabot is the only bot, as
-  `brew tap-new` ships it. The org Renovate preset is private to icanalytica,
-  and a personal repo cannot read it.
-- `tests/dir`, `ci/junit`, `ci/step-summary`, `ci/render_summary`:
-  `brew test-bot` is the test suite, and it emits no JUnit.
-- Ruby: the casks are Homebrew's cask DSL, run on Homebrew's bundled Ruby,
-  so the audit sees no Ruby (no Gemfile) and none of the Ruby standard
-  applies: no `.ruby-version`, Gemfile, repo RuboCop config, Sorbet or RSpec.
-  `brew style` (RuboCop with Homebrew's config) and `brew audit` do that job.
-  A `.rubocop.yml` here would fight Homebrew's config.
-- `lint/hook-yamllint`, `lint/hook-json-xml`, `lint/hook-toml`: the only YAML
-  is the workflows and `dependabot.yml`, which actionlint and the schema hooks
-  cover. There is no TOML, and the only JSON is two lint configs.
-- `ci/runner`: the Linux leg runs in `ghcr.io/homebrew/brew:main`, as the
-  upstream template does.
-- No required status check on `main` (operator's choice). Both bots open PRs
-  with `GITHUB_TOKEN`, and test-bot runs on those PRs only after someone
-  approves the run (the PR's Checks tab, "Approve and run"). An unapproved
-  run expires and fails with "required approval but was not approved". So the
-  bots check their own changes before opening a PR: `brew bump` audits and
-  styles, and `open-tap-sync.sh` runs `brew style` and `brew audit` and puts
-  the result in the PR.
+- `lint/hook-yamllint`: the only YAML is the workflows and `dependabot.yml`,
+  which actionlint and the schema hooks cover.
+- `github/required-checks`: no required status check on `main` (operator's
+  choice). Both bots open PRs with `GITHUB_TOKEN`, and test-bot runs on those
+  PRs only after someone approves the run (the PR's Checks tab, "Approve and
+  run"). An unapproved run expires and fails with "required approval but was
+  not approved". So the bots check their own changes before opening a PR:
+  `brew bump` audits and styles, and `open-tap-sync.sh` runs `brew style` and
+  `brew audit` and puts the result in the PR.
 
 ## Contributing
 
