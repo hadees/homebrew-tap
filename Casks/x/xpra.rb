@@ -1,15 +1,9 @@
 cask "xpra" do
   arch arm: "arm64", intel: "x86_64"
 
-  sha256 arm:   "b98262da8c3a74234d755123b064200f737c11c720a5d6380ab638bb1f309af0",
-         intel: "da4637d6470c82dddb68c6e29695a1fc65ef68d2c472a95adaf78206362e3b1a"
-
-  on_arm do
-    version "6.5.5,0"
-  end
-  on_intel do
-    version "6.5.5,0"
-  end
+  version "7.0,0"
+  sha256 arm:   "44429e46ff8db7c9baee90536291f59b247e4bd0ed663b2d5fff1aa76df13c91",
+         intel: "a95c67f3b7e53b5b068878a712640ac6f60b9cb1aee363e245a71764522616b7"
 
   url "https://xpra.org/dists/MacOS/#{arch}/Xpra-#{arch}-#{version.csv.first}-r#{version.csv.second}.dmg"
   name "Xpra"
@@ -29,12 +23,10 @@ cask "xpra" do
   depends_on macos: :monterey
 
   app "Xpra.app"
-  # The launcher finds its bundle from the path it was run by, so a symlink
-  # (`binary`) breaks it; a wrapper execs the real path.
-  command_wrapper "xpra", executable: "#{appdir}/Xpra.app/Contents/MacOS/Xpra"
+  binary "#{appdir}/Xpra.app/Contents/MacOS/Xpra", target: "xpra"
 
   postflight_steps do
-    run "/usr/bin/xattr", args: ["-r", "-d", "com.apple.quarantine", "{{appdir}}/Xpra.app"]
+    run "/usr/bin/xattr", args: ["-r", "-d", "com.apple.quarantine", "{{staged_path}}"]
   end
 
   zap delete: "/Library/Application Support/Xpra",
