@@ -2,8 +2,7 @@ cask "gita" do
   version "0.3.0"
   sha256 "c0f8875739880075dd90fa84a5a871c6a665552772d88a7e4446a993b2ed8203"
 
-  url "https://github.com/clever-mechanisms/gita/releases/download/v#{version}/Gita-#{version}-macos.zip",
-      verified: "github.com/clever-mechanisms/gita/"
+  url "https://github.com/clever-mechanisms/gita/releases/download/v#{version}/Gita-#{version}-macos.zip"
   name "Gita"
   desc "Native Git client built around repository history"
   homepage "https://getgita.app/"
