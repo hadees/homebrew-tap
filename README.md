@@ -14,6 +14,7 @@ cask "hadees/tap/xpra"
 | `xpra` | notarized; `xpra` on PATH is a wrapper, not a symlink (the launcher finds its bundle from the path it was run by) |
 | `deluge` | unsigned, Intel only (Rosetta) |
 | `hakuneko` | unsigned, Intel only (Rosetta) |
+| `gita` | notarized; not in Homebrew's tap; updates itself (Sparkle) |
 
 ## Quarantine
 
